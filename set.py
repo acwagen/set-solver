@@ -1,6 +1,7 @@
 from cards import *
 import time
 import sys
+from itertools import combinations
 
 def validateSet(card1, card2, card3):
 	"""
@@ -33,15 +34,12 @@ def findSet(cards):
 	Iterate over all possible combinations of three cards and check 
 	each combination of three for validity until we find a set.
 	"""
-	for card1 in cards:
-		for card2 in cards:
-			for card3 in cards:
-				if card1 != card2 and card2 != card3 and card1 != card3:
-					if validateSet(card1, card2, card3):
-						cards.remove(card1)
-						cards.remove(card2)
-						cards.remove(card3)
-						return (cards, True)
+	for potentialSet in combinations(cards, 3):
+		if validateSet(potentialSet[0], potentialSet[1], potentialSet[2]):
+			cards.remove(potentialSet[0])
+			cards.remove(potentialSet[1])
+			cards.remove(potentialSet[2])
+			return (cards, True)
 
 	return (cards, False)
 
@@ -51,25 +49,20 @@ def findSetFast(cards):
 	Iterate over all possible pairs of cards, and for each pair
 	construct the card that would complete the set. Check if that card
 	exists in cards, if so, we've found a set. 
-
-	Still naive because it performs redundant/unnecessary checks. 
 	"""
 
 	# compare every two cards
-	for card1 in cards:
-		for card2 in cards:
-			# don't compare a card to itself
-			if card1 != card2:
-				# construct the card that would make a set
-				card3 = completeSet(card1, card2)
+	for pair in combinations(cards, 2):
+		# construct the card that would make a set
+		card3 = completeSet(pair[0], pair[1])
 
-				# check if that card is present
-				if card3 in cards:
-					cards.remove(card1)
-					cards.remove(card2)
-					cards.remove(card3)
-					return (cards, True)
-
+		# check if that card is present
+		if card3 in cards:
+			cards.remove(pair[0])
+			cards.remove(pair[1])
+			cards.remove(card3)
+			return (cards, True)
+	
 	return (cards, False)
 
 def findSetFaster(cards):
@@ -129,17 +122,16 @@ def findSetFaster(cards):
 				return (cards, True)
 
 	for numberSet in numbers:
-		for i in range(0, len(numberSet) - 2):
-			for card2 in numberSet[i + 1:]:
-				# construct the card that would make a set
-				card3 = completeSet(numberSet[i], card2)
+		for pair in combinations(numberSet, 2):
+			# construct the card that would make a set
+			card3 = completeSet(pair[0], pair[1])
 
-				# check if that card is present
-				if card3 in cards:
-					cards.remove(numberSet[i])
-					cards.remove(card2)
-					cards.remove(card3)
-					return (cards, True)
+			# check if that card is present
+			if card3 in cards:
+				cards.remove(pair[0])
+				cards.remove(pair[1])
+				cards.remove(card3)
+				return (cards, True)
 
 	return (cards, False)
 
