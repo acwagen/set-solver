@@ -94,23 +94,11 @@ def findSetFaster(cards):
 	for c in cards:
 		numbers[c.number].append(c)
 
-	# select smallest two sets
-	# TODO: surely there's a cleaner/better way to do this
-	firstMinIdx = NUMBER_ONE
-	secondMinIdx = NUMBER_TWO
-	thirdMinIdx = NUMBER_THREE
+	# sort buckets by size
+	numbers.sort(key=lambda x: len(x))
 
-	if len(numbers[firstMinIdx]) > len(numbers[thirdMinIdx]):
-		tmp = firstMinIdx
-		firstMinIdx = thirdMinIdx
-		thirdMinIdx = tmp
-	if len(numbers[secondMinIdx]) > len(numbers[thirdMinIdx]):
-		tmp = secondMinIdx
-		secondMinIdx = thirdMinIdx
-		thirdMinIdx = tmp
-
-	for card1 in numbers[firstMinIdx]:
-		for card2 in numbers[secondMinIdx]:
+	for card1 in numbers[0]:
+		for card2 in numbers[1]:
 			# construct the card that would make a set
 			card3 = completeSet(card1, card2)
 
@@ -151,7 +139,10 @@ def playSet(findSet):
 
 def main():
 
-	numIterations = int(sys.argv[1])
+	numIterations = 10
+
+	if (len(sys.argv) == 2):
+		numIterations = int(sys.argv[1])
 
 	start = time.time()
 	
@@ -170,14 +161,14 @@ def main():
 
 	end = time.time()
 
-	print "***FIND SETS***"
-	print "Time: ", mid1 - start
+	print("***FIND SETS***")
+	print("Time: {}".format(mid1 - start))
 
-	print "***FIND SETS FAST***"
-	print "Time: ", mid2 - mid1
+	print("***FIND SETS FAST***")
+	print("Time: {}".format(mid2 - mid1))
 
-	print "***FIND SETS FASTER***"
-	print "Time: ", end - mid2	
+	print("***FIND SETS FASTER***")
+	print("Time: {}".format(end - mid2))
 
 if __name__ == '__main__':
 	main()
